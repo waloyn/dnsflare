@@ -17,7 +17,7 @@
                     <el-input @input="updateFilter" v-model="filterList" placeholder="输入过滤" />
                 </div>
             </template>
-            <el-table    
+            <el-table
                 v-loading="isLoading"
                 :data="filterTableData"
             >
@@ -135,6 +135,7 @@ function listZoneRecord(data: CloudflareZoneRecord) {
         name: 'ZoneRecordList',
         params: {
             id: data.id,
+            name: data.name,
         },
     })
 }

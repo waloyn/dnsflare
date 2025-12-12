@@ -10,6 +10,6 @@ export default [{
 }, {
     name: 'ZoneRecordList',
     component: ZoneInfoRoute,
-    path: '/zone/:id',
+    path: '/zone/:id/:name',
     props: true,
 }] as RouteConfig[]

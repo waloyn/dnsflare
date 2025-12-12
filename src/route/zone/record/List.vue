@@ -7,7 +7,10 @@
     <el-card>
         <template #header>
             <div class="card-header">
-                <span style="margin-top: auto; margin-bottom: auto;">DNS 列表</span>
+                <div style="display: flex; flex-direction: column;">
+                    <span style="margin-top: auto; margin-bottom: auto;">DNS 列表</span>
+                    <span style="font-size: 12px; color: #909399;">当前域名: {{ zoneName }}</span>
+                </div>
                 <el-input @input="updateFilter" v-model="filterList" placeholder="输入过滤" />
                 <el-button
                     id="create-record-button"
@@ -122,6 +125,7 @@ const isLoading = ref(true)
 
 const props = defineProps<{
     zoneId: string
+    zoneName: string
 }>()
 
 const record = ref<typeof RecordModal>()
@@ -134,6 +138,9 @@ const pageInfo = ref<PaginationDetails>({
 
 const zoneId = computed(() => {
     return props.zoneId
+})
+const zoneName = computed(() => {
+    return props.zoneName
 })
 const filterTableData = computed(() => {
     if (filterList.value.length === 0) {
@@ -164,11 +171,22 @@ async function updateFilter() {
 
 async function rawLoadPage(page?: PageSettings): Promise<LoadPageResponse<any>> {
     const records = await listZoneDnsRecord(zoneId.value, page)
+    console.log('Raw records from API:', records)
 
     if (records.result && records.resultInfo) {
+        const processedData = records.result.map(record => {
+            console.log('Processing record:', record)
+            return {
+                ...record,
+                zoneId: zoneId.value,
+                zoneName: zoneName.value
+            }
+        })
+        console.log('Processed data:', processedData)
+
         return {
             pageDetail: convertPagination(records.resultInfo),
-            data: records.result
+            data: processedData
         }
     }
 
@@ -229,7 +247,14 @@ function changeSize(pageSize: number) {
 }
 
 async function doDeleteRecord(record: CloudflareDnsRecord) {
-    const deleteError = await deleteRecord(record)
+    console.log('Record to delete:', record)
+    console.log('Current zoneId:', props.zoneId)
+    console.log('Current zoneId computed:', zoneId.value)
+
+    const deleteError = await deleteRecord({
+        ...record,
+        zoneId: record.zoneId || props.zoneId || zoneId.value
+    })
 
     if (deleteError) {
         ElMessage({

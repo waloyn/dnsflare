@@ -12,7 +12,7 @@
         </el-breadcrumb-item>
     </el-breadcrumb>
     <br>
-    <ZoneRecordList :zoneId="zoneId" />
+    <ZoneRecordList :zoneId="zoneId" :zoneName="zoneName" />
     <CertInfo :zoneId="zoneId" />
 </template>
 
@@ -28,5 +28,10 @@ const zoneId = computed(() => {
     const {id} = route.params
 
     return id as string
+})
+
+const zoneName = computed(() => {
+    const {name} = route.params
+    return name as string
 })
 </script>
