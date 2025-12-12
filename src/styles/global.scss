@@ -1,15 +1,43 @@
-
-
 html {
-    font-family: -apple-system, “Noto Sans”, “Helvetica Neue”, Helvetica, “Nimbus Sans L”, Arial, “Liberation Sans”, “PingFang SC”, “Hiragino Sans GB”, “Noto Sans CJK SC”, “Source Han Sans SC”, “Source Han Sans CN”, “Microsoft YaHei”, “Wenquanyi Micro Hei”, “WenQuanYi Zen Hei”, “ST Heiti”, SimHei, “WenQuanYi Zen Hei Sharp”, sans-serif;
+    font-family: -apple-system, "Noto Sans", "Helvetica Neue", Helvetica, "Nimbus Sans L", Arial, "Liberation Sans", "PingFang SC", "Hiragino Sans GB", "Noto Sans CJK SC", "Source Han Sans SC", "Source Han Sans CN", "Microsoft YaHei", "Wenquanyi Micro Hei", "WenQuanYi Zen Hei", "ST Heiti", SimHei, "WenQuanYi Zen Hei Sharp", sans-serif;
+    background-color: var(--el-bg-color);
+    color: var(--el-text-color-primary);
+    transition: background-color 0.3s, color 0.3s;
+}
+
+html.dark {
+    /* Explicitly ensuring dark mode applies if needed, though Element Plus vars usually handle it */
+    color-scheme: dark;
 }
 
 .container {
-    max-width: 1140px;
-    padding: 0;
+    width: 80%;
     margin: 0 auto;
+    padding: 0 20px;
+    box-sizing: border-box;
 
-    @media (max-width: 1140px) {
-        padding: 0px 20px;
+    /* Responsive breakpoints */
+    @media (min-width: 768px) {
+        max-width: 720px;
+    }
+
+    @media (min-width: 992px) {
+        max-width: 960px;
+    }
+
+    @media (min-width: 1200px) {
+        max-width: 1140px;
+    }
+
+    @media (min-width: 1400px) {
+        max-width: 1320px;
+    }
+
+    @media (min-width: 1600px) {
+        max-width: 1540px;
+    }
+
+    @media (min-width: 1920px) {
+        max-width: 1800px;
     }
 }

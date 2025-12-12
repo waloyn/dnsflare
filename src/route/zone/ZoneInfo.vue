@@ -2,13 +2,13 @@
 
     <el-breadcrumb separator="/">
         <el-breadcrumb-item>
-            Home
+            {{t('app.title')}}
         </el-breadcrumb-item>
         <el-breadcrumb-item :to="{ name: 'ZoneList' }">
-            Zone 列表
+            {{t('zoneList.title')}}
         </el-breadcrumb-item>
         <el-breadcrumb-item>
-            Zone 信息
+            {{t('recordList.info')}}
         </el-breadcrumb-item>
     </el-breadcrumb>
     <br>
@@ -21,6 +21,9 @@ import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import ZoneRecordList from './record/List.vue'
 import CertInfo from './CertInfo.vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const route = useRoute()
 

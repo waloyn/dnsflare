@@ -1,6 +1,6 @@
 <template>
     <el-dialog
-        :title="`${modeLocale} Record`"
+        :title="`${modeLocale}`"
         :modelValue="dialogVisible"
         class="container"
         @update:modelValue="handleClose"
@@ -20,7 +20,7 @@
                         <span>
                             <FontAwesomeIcon
                                 icon="file"
-                            /> 名称
+                            /> {{ t('recordForm.name') }}
                         </span>
                     </template>
                     <el-input v-model="model.name" />
@@ -33,7 +33,7 @@
                         <span>
                             <FontAwesomeIcon
                                 icon="font"
-                            /> 目标
+                            /> {{ t('recordForm.content') }}
                         </span>
                     </template>
                     <el-input v-model="model.content" />
@@ -46,7 +46,7 @@
                         <span>
                             <FontAwesomeIcon
                                 icon="sort-numeric-up"
-                            /> 优先级
+                            /> {{ t('recordForm.priority') }}
                         </span>
                     </template>
                     <el-input-number v-model="model.priority" />
@@ -58,12 +58,12 @@
                         <span>
                             <FontAwesomeIcon
                                 icon="globe-asia"
-                            /> 类型
+                            /> {{ t('recordForm.type') }}
                         </span>
                     </template>
                     <el-select
                         v-model="model.type"
-                        placeholder="选择"
+                        :placeholder="t('recordForm.select')"
                     >
                         <el-option
                             v-for="(item, index) in dnsTypes"
@@ -91,7 +91,7 @@
 
                         <el-switch
                             v-model="model.autoTTL"
-                            active-text="自动 TTL"
+                            :active-text="t('recordForm.ttl_auto')"
                         />
                     </div>
                 </el-form-item>
@@ -102,7 +102,7 @@
                         <span>
                             <FontAwesomeIcon
                                 icon="cloud"
-                            /> 代理
+                            /> {{ t('recordForm.proxied') }}
                         </span>
                     </template>
                     <el-checkbox v-model="model.proxied">
@@ -117,8 +117,8 @@
                     type="primary"
                     :loading="isLoading"
                     @click="createRecord"
-                >保存</el-button>
-                <el-button @click="handleClose">取消</el-button>
+                >{{ t('recordForm.save') }}</el-button>
+                <el-button @click="handleClose">{{ t('recordForm.cancel') }}</el-button>
             </span>
         </template>
     </el-dialog>
@@ -132,8 +132,10 @@ import { DnsRecordTypeEnum } from '@/api/enum'
 import { createDnsRecord, putRecord } from '@/api/dns'
 import { DnsRecordType, CloudflareDnsRecord } from '@/api'
 import type { FormInstance, FormRules } from 'element-plus'
+import { useI18n } from 'vue-i18n'
 
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+const { t } = useI18n()
 const ruleFormRef = ref<FormInstance>()
 const emits = defineEmits<{
   (event: 'close'): void
@@ -186,7 +188,7 @@ const isEditMode = computed(() => {
 })
 
 const modeLocale = computed(() => {
-    return isEditMode.value ? '修改' : '新建'
+    return isEditMode.value ? t('recordForm.modify') : t('recordForm.create')
 })
 
 function display() {
@@ -200,13 +202,13 @@ function handleClose() {
 
 
 const validationRules = reactive<FormRules>({
-    name: [{ required: true, message: '请输入记录名称', trigger: 'blur' } ],
-    content: [{ required: true, message: '请输入记录值', trigger: 'blur' } ],
+    name: [{ required: true, message: t('recordForm.name_msg'), trigger: 'blur' } ],
+    content: [{ required: true, message: t('recordForm.content_msg'), trigger: 'blur' } ],
     ttl: [
-        { required: true, message: '请输入记录 TTL', trigger: 'blur' },
-        { type: 'number', message: 'TTL 需要是一个数字', trigger: 'blur' },
+        { required: true, message: t('recordForm.ttl_msg'), trigger: 'blur' },
+        { type: 'number', message: t('recordForm.ttl_err'), trigger: 'blur' },
     ],
-    type: [{ required: true, message: '请输入记录类型', trigger: 'blur' } ],
+    type: [{ required: true, message: t('recordForm.type_msg'), trigger: 'blur' } ],
 })
 
 function setRecord(r: CloudflareDnsRecord) {

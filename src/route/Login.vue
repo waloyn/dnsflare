@@ -1,8 +1,8 @@
 <template>
-    <el-card class="box-card">
+    <el-card class="box-card login-panel">
         <template #header>
             <div class="clearfix">
-                <span>登录</span>
+                <span>{{t('app.login')}}</span>
             </div>
         </template>
         <el-form
@@ -11,26 +11,26 @@
             label-width="120px"
         >
             <el-form-item
-                label="Token"
+                :label="t('app.token')"
                 prop="token"
             >
                 <el-input v-model="model.token" />
             </el-form-item>
-            <el-divider>或者</el-divider>
+            <el-divider>{{t('app.or')}}</el-divider>
             <el-form-item
-                label="邮箱地址"
+                :label="t('app.email')"
                 prop="email"
             >
                 <el-input v-model="model.email" />
             </el-form-item>
             <el-form-item
-                label="全局 Token"
+                :label="t('app.globalToken')"
                 prop="globalToken"
             >
                 <el-input v-model="model.globalToken" />
             </el-form-item>
 
-            <el-form-item label="记住凭证">
+            <el-form-item :label="t('app.save')">
                 <el-switch v-model="model.save" />
             </el-form-item>
             <el-form-item>
@@ -39,10 +39,10 @@
                     :loading="isLoading"
                     @click="submit"
                 >
-                    提交
+                    {{t('app.submit')}}
                 </el-button>
                 <el-button @click="reset">
-                    重置
+                    {{t('app.reset')}}
                 </el-button>
             </el-form-item>
         </el-form>
@@ -55,6 +55,9 @@ import { useUserStore } from '@/store/user'
 import { ElMessage } from 'element-plus'
 import { useRouter } from 'vue-router'
 import { userTokenVerify, userEmailVerify } from '@/api/account'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const model = reactive({
     token: '',
@@ -138,7 +141,7 @@ function reset() {
 <style lang="scss" scoped>
     .login-panel {
         margin: auto;
-        margin-top: 20px;
-        max-width: 400px;
+        margin-top: 50px;
+        max-width: 600px;
     }
 </style>

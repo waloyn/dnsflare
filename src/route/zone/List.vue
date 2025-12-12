@@ -2,10 +2,10 @@
     <div>
         <el-breadcrumb separator="/">
             <el-breadcrumb-item>
-                Home
+                {{t('app.title')}}
             </el-breadcrumb-item>
             <el-breadcrumb-item>
-                Zone 列表
+                {{t('zoneList.title')}}
             </el-breadcrumb-item>
         </el-breadcrumb>
 
@@ -13,8 +13,8 @@
         <el-card>
             <template #header>
                 <div class="card-header">
-                    <span>Zone 列表</span>
-                    <el-input @input="updateFilter" v-model="filterList" placeholder="输入过滤" />
+                    <span>{{t('zoneList.title')}}</span>
+                    <el-input @input="updateFilter" v-model="filterList" :placeholder="t('zoneList.search')" />
                 </div>
             </template>
             <el-table
@@ -23,22 +23,34 @@
             >
                 <el-table-column
                     prop="name"
-                    label="域名"
+                    :label="t('zoneList.domain')"
                 />
                 <el-table-column
                     prop="status"
-                    label="状态"
+                    :label="t('zoneList.status')"
                 />
                 <el-table-column
-                    label="接入商"
+                    :label="t('zoneList.provider')"
                 >
                     <template #default="scope">
                         {{ (scope.row.host || {name: 'Cloudflare'}).name }}
                     </template>
                 </el-table-column>
                 <el-table-column
+                    prop="plan.name"
+                    :label="t('zoneList.plan')"
+                />
+                <el-table-column
+                    :label="t('zoneList.lastUpdated')"
+                    width="180"
+                >
+                    <template #default="scope">
+                        {{ formatDate(scope.row.modifiedOn) }}
+                    </template>
+                </el-table-column>
+                <el-table-column
                     fixed="right"
-                    label="操作"
+                    :label="t('zoneList.actions')"
                     width="100"
                 >
                     <template #default="scope">
@@ -46,7 +58,7 @@
                             size="small"
                             @click.prevent="listZoneRecord(scope.row)"
                         >
-                            编辑
+                            {{t('zoneList.action_edit')}}
                         </el-button>
                     </template>
                 </el-table-column>
@@ -83,7 +95,9 @@ import { useRouter } from 'vue-router'
 import { listUserZones, listUserZonesAll } from '../../api/zone'
 import { PaginationDetails, convertPagination, fullLoadPages } from '../../utils/pagination'
 import { CloudflareZoneRecord, PageSettings } from '@/api'
+import { useI18n } from 'vue-i18n'
 
+const { t } = useI18n()
 const filterList: Ref<string> = ref("")
 const isLoading: Ref<boolean> = ref(true)
 const datas: Ref<CloudflareZoneRecord[]> = ref([])
@@ -128,6 +142,21 @@ function changeSize(pageSize: number) {
         perPage: pageSize,
         page: pageInfo.value.page,
     })
+}
+
+function formatDate(date: string) {
+    if (!date) return ''
+    const d = new Date(date)
+    return d.toLocaleString('zh-CN', {
+        timeZone: 'Asia/Shanghai',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false
+    }).replace(/\//g, '-')
 }
 
 function listZoneRecord(data: CloudflareZoneRecord) {

@@ -8,17 +8,17 @@
         <template #header>
             <div class="card-header">
                 <div style="display: flex; flex-direction: column;">
-                    <span style="margin-top: auto; margin-bottom: auto;">DNS 列表</span>
-                    <span style="font-size: 12px; color: #909399;">当前域名: {{ zoneName }}</span>
+                    <span style="margin-top: auto; margin-bottom: auto;">{{t('recordList.title')}}</span>
+                    <span style="font-size: 12px; color: #909399;">{{t('recordList.domain')}}: {{ zoneName }}</span>
                 </div>
-                <el-input @input="updateFilter" v-model="filterList" placeholder="输入过滤" />
+                <el-input @input="updateFilter" v-model="filterList" :placeholder="t('recordList.search')" />
                 <el-button
                     id="create-record-button"
                     text
                     type="primary"
                     @click="displayCreate"
                 >
-                    创建
+                    {{t('recordList.action_create')}}
                 </el-button>
             </div>
         </template>
@@ -28,28 +28,28 @@
         >
             <el-table-column
                 prop="name"
-                label="域名"
+                :label="t('recordList.name')"
             />
             <el-table-column
                 prop="type"
-                label="类型"
+                :label="t('recordList.type')"
                 width="100"
             />
             <el-table-column
                 prop="content"
-                label="内容"
+                :label="t('recordList.content')"
             />
             <el-table-column
-                label="TTL"
+                :label="t('recordList.ttl')"
                 width="100"
             >
                 <template #default="scope">
-                    {{ scope.row.ttl === 1 ? '自动' : scope.row.ttl }}
+                    {{ scope.row.ttl === 1 ? t('recordList.ttl_auto') : scope.row.ttl }}
                 </template>
             </el-table-column>
 
             <el-table-column
-                label="CDN"
+                :label="t('recordList.cdn')"
                 width="100"
             >
                 <template #default="scope">
@@ -64,16 +64,16 @@
             </el-table-column>
             <el-table-column
                 fixed="right"
-                label="操作"
+                :label="t('recordList.actions')"
                 width="150"
             >
                 <template #default="scope">
                     <el-popconfirm
-                        confirm-button-text="好的"
-                        cancel-button-text="算了吧"
+                        :confirm-button-text="t('recordList.action_delete_confirm_ok')"
+                        :cancel-button-text="t('recordList.action_delete_confirm_cancel')"
                         icon="el-icon-info"
                         icon-color="red"
-                        title="你真的要删除这条记录吗? 它将会永久消失 (真的很久)"
+                        :title="t('recordList.action_delete_confirm')"
                         @confirm="doDeleteRecord(scope.row)"
                     >
                         <template #reference>
@@ -82,7 +82,7 @@
                                 type="primary"
                                 size="small"
                             >
-                                删除
+                                {{t('recordList.action_delete')}}
                             </el-button>
                         </template>
                     </el-popconfirm>
@@ -93,7 +93,7 @@
                         size="small"
                         @click.prevent="editRecord(scope.row)"
                     >
-                        修改
+                        {{t('recordList.action_edit')}}
                     </el-button>
 
                 </template>
@@ -120,6 +120,8 @@ import { listZoneDnsRecord, deleteRecord, patchRecord, listZoneDnsRecordAll } fr
 import RecordModal from './Record.vue'
 import { CloudflareDnsRecord, PageSettings } from '@/api'
 import { PaginationDetails, convertPagination, LoadPageResponse, fullLoadPages } from '@/utils/pagination'
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 const filterList = ref("")
 const isLoading = ref(true)
 

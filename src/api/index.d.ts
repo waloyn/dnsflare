@@ -146,6 +146,9 @@ type CloudflareZoneRecord = {
         name: string
     }
 
+    // The plan of the zone
+    plan: CloudflarePlan
+
     // Available permissions on the zone for the current user requesting the
     permissions: string[]
 }
@@ -156,8 +159,8 @@ type PageSettings = {
 }
 
 type DnsRecordType = 'A' | 'AAAA' | 'CNAME' | 'TXT' | 'SRV' | 'LOC' | 'MX'
-| 'NS' | 'SPF' | 'CERT' | 'DNSKEY' | 'DS' | 'NAPTR' | 'SMIMEA' | 'SSHFP'
-| 'TLSA' | 'URI' | DnsRecordTypeEnum
+    | 'NS' | 'SPF' | 'CERT' | 'DNSKEY' | 'DS' | 'NAPTR' | 'SMIMEA' | 'SSHFP'
+    | 'TLSA' | 'URI' | DnsRecordTypeEnum
 
 
 type CloudflareDnsRecord = {
