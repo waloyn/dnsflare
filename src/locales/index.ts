@@ -4,7 +4,7 @@ import en from './en'
 
 const i18n = createI18n({
     legacy: false, // Use Composition API
-    locale: 'zh', // Default locale
+    locale: localStorage.getItem('locale') || 'zh', // Restore user's choice saved by Header.vue
     fallbackLocale: 'en',
     messages: {
         zh,

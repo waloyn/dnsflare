@@ -6,8 +6,8 @@ function toHungarian(name: string): string {
     return name.replace(/[A-Z]/g, (letter: string) => `_${letter.toLowerCase()}`)
 }
 
-function objectNameTransform(input: any, objectNameRule: (string) => string): any {
-    const ret = {}
+function objectNameTransform(input: any, objectNameRule: (name: string) => string): any {
+    const ret: Record<string, any> = {}
 
     if (Array.isArray(input)) {
         return input.map(it => objectNameTransform(it, objectNameRule))
@@ -28,5 +28,5 @@ function objectNameTransform(input: any, objectNameRule: (string) => string): an
     return ret
 }
 
-export const objectToCamelCase = input => objectNameTransform(input, toCamelCase)
-export const objectToHungarian = input => objectNameTransform(input, toHungarian)
+export const objectToCamelCase = (input: any) => objectNameTransform(input, toCamelCase)
+export const objectToHungarian = (input: any) => objectNameTransform(input, toHungarian)

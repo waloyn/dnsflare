@@ -127,3 +127,9 @@ yarn-error.log
 
 # yarn
 package-lock.json
+
+# wrangler local state / cache
+.wrangler/
+
+# manual deploy package
+dnsflare-pages-*.zip

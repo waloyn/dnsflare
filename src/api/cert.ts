@@ -1,5 +1,6 @@
 import { useAxios } from '@/utils/requests'
 import { objectToCamelCase, objectToHungarian } from '@/utils/case'
+import { toFailureResponse } from '@/utils/apiError'
 import { APIResponse } from '.'
 
 
@@ -28,7 +29,7 @@ export async function getCertInfo(zoneId: string): Promise<APIResponse<Cloudflar
 
         return (objectToCamelCase(response.data) as any)
     } catch (err) {
-        return (objectToCamelCase(err.response.data) as any)
+        return toFailureResponse<CloudflareCertInfo>(err)
     }
 }
 
@@ -46,6 +47,6 @@ export async function patchCertAuthority(zoneId: string, authority: CertificateA
 
         return (objectToCamelCase(response.data) as any)
     } catch (err) {
-        return (objectToCamelCase(err.response.data) as any)
+        return toFailureResponse<any>(err)
     }
 }

@@ -1,4 +1,4 @@
-import { RouteConfig } from 'vue-router'
+import { RouteRecordRaw } from 'vue-router'
 import ZoneList from '@/route/zone/List.vue'
 import ZoneInfoRoute from '@/route/zone/ZoneInfo.vue'
 
@@ -12,4 +12,4 @@ export default [{
     component: ZoneInfoRoute,
     path: '/zone/:id/:name',
     props: true,
-}] as RouteConfig[]
+}] as RouteRecordRaw[]

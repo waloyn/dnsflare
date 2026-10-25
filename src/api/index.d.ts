@@ -200,6 +200,9 @@ type CloudflareDnsRecord = {
     // When the record was created
     createdOn: '2018-03-01T14:47:53.403547Z'
 
+    // Used with some records like MX and SRV to determine priority
+    priority?: number
+
     // Extra Cloudflare-specific information about the record
     meta: {
         // Will exist if Cloudflare automatically added this DNS record during initial setup.

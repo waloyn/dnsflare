@@ -12,6 +12,36 @@ type UserStoreState = {
     type: LoginType
 }
 
+// Credentials persist to localStorage only when the user enabled "save credentials";
+// otherwise they stay in sessionStorage and are gone once the tab closes.
+const credentialStorage = {
+    getItem(key: string): string | null {
+        return localStorage.getItem(key) ?? sessionStorage.getItem(key)
+    },
+
+    setItem(key: string, value: string): void {
+        let saveToken = false
+        try {
+            saveToken = JSON.parse(value)?.saveToken === true
+        } catch {
+            saveToken = false
+        }
+
+        if (saveToken) {
+            sessionStorage.removeItem(key)
+            localStorage.setItem(key, value)
+        } else {
+            localStorage.removeItem(key)
+            sessionStorage.setItem(key, value)
+        }
+    },
+
+    removeItem(key: string): void {
+        localStorage.removeItem(key)
+        sessionStorage.removeItem(key)
+    },
+} as Storage
+
 export const useUserStore = defineStore('user', {
     state: (): UserStoreState => {
         return {
@@ -23,7 +53,9 @@ export const useUserStore = defineStore('user', {
         }
     },
 
-    persist: true,
+    persist: {
+        storage: credentialStorage,
+    },
 
     actions: {
         setToken(token: string) {

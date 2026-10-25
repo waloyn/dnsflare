@@ -1,6 +1,7 @@
 import { useAxios } from '@/utils/requests'
 import { objectToCamelCase, objectToHungarian } from '@/utils/case'
 import { LoadPageFunc, LoadPageResponse, convertPagination } from '@/utils/pagination'
+import { getErrorMessage, describeApiResponse } from '@/utils/apiError'
 import { APIResponse, CloudflareDnsRecord, PageSettings, DnsRecordType } from '.'
 
 
@@ -25,9 +26,13 @@ export function listZoneDnsRecordAll(zoneId: string): LoadPageFunc<CloudflareDns
     return async function (page?: PageSettings): Promise<LoadPageResponse<CloudflareDnsRecord>> {
         const data = await listZoneDnsRecord(zoneId, page)
 
+        if (!data.result || !data.resultInfo) {
+            throw new Error(describeApiResponse(data, '加载解析记录失败'))
+        }
+
         return {
-            data: data.result!,
-            pageDetail: convertPagination(data.resultInfo!)
+            data: data.result,
+            pageDetail: convertPagination(data.resultInfo)
         }
     }
 }
@@ -40,7 +45,7 @@ export async function deleteRecord(payload: CloudflareDnsRecord): Promise<string
             method: 'delete',
         })
     }  catch (err) {
-        return err.response.data.errors[0].message
+        return getErrorMessage(err)
     }
 }
 
@@ -75,7 +80,7 @@ export async function createDnsRecord(zone: string, request: CreateDnsRecordRequ
             url: `/zones/${zone}/dns_records`,
         })
     } catch (err) {
-        return err.response.data.errors[0].message
+        return getErrorMessage(err)
     }
 }
 
@@ -110,7 +115,7 @@ export async function patchRecord(record: CloudflareDnsRecord, editRequest: Edit
             url: `/zones/${record.zoneId}/dns_records/${record.id}`,
         })
     } catch (err) {
-        return err.response.data.errors[0].message
+        return getErrorMessage(err)
     }
 }
 
@@ -123,6 +128,6 @@ export async function putRecord(record: CloudflareDnsRecord, editRequest: EditDn
             url: `/zones/${record.zoneId}/dns_records/${record.id}`,
         })
     } catch (err) {
-        return err.response.data.errors[0].message
+        return getErrorMessage(err)
     }
 }
