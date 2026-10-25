@@ -114,8 +114,11 @@
                     </div>
                 </el-form-item>
 
-                <!-- Cloudflare Proxy Setting -->
-                <el-form-item :label="t('recordForm.proxied')">
+                <!-- Cloudflare Proxy Setting (only A / AAAA / CNAME can be proxied) -->
+                <el-form-item
+                    v-if="isProxiableType"
+                    :label="t('recordForm.proxied')"
+                >
                     <div
                         class="proxy-toggle-card"
                         :class="{ 'is-active': model.proxied }"
@@ -208,6 +211,11 @@ const requirePriority = computed(() => {
     return model.value.type === 'MX' || model.value.type === 'SRV'
 })
 
+// Per Cloudflare docs, only IP resolution records can be proxied
+const isProxiableType = computed(() => {
+    return model.value.type === 'A' || model.value.type === 'AAAA' || model.value.type === 'CNAME'
+})
+
 const dnsTypes = computed(() => {
     return Object.keys(DnsRecordTypeEnum)
 })
@@ -230,6 +238,19 @@ function getTypeDescription(type: string): string {
         case 'NS': return '名称服务器'
         case 'SRV': return '服务定位记录'
         case 'CAA': return 'CA 授权限制'
+        case 'PTR': return '反向解析记录'
+        case 'SVCB': return '服务绑定记录'
+        case 'HTTPS': return 'HTTPS 服务绑定记录'
+        case 'LOC': return '地理位置记录'
+        case 'SPF': return 'SPF 邮件发件授权'
+        case 'CERT': return '证书记录'
+        case 'DNSKEY': return 'DNSSEC 公钥'
+        case 'DS': return 'DNSSEC 委托签名'
+        case 'NAPTR': return '命名授权指针'
+        case 'SMIMEA': return 'S/MIME 证书关联'
+        case 'SSHFP': return 'SSH 主机指纹'
+        case 'TLSA': return 'TLS 证书关联'
+        case 'URI': return 'URI 定位记录'
         default: return ''
     }
 }
@@ -292,7 +313,7 @@ async function createRecord() {
         content: model.value.content,
         type: model.value.type,
         ttl: model.value.autoTTL ? 1 : model.value.ttl,
-        proxied: model.value.proxied,
+        proxied: isProxiableType.value ? model.value.proxied : false,
     }
 
     if (requirePriority.value) {

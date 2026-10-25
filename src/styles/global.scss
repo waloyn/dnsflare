@@ -197,6 +197,10 @@ body {
     border-radius: 6px;
     letter-spacing: 0.05em;
     line-height: 1;
+    // Default badge colors, overridden by specific types below
+    background-color: #f1f5f9;
+    color: #475569;
+    border: 1px solid #e2e8f0;
 
     &.type-A {
         background-color: #dbeafe;
@@ -234,15 +238,26 @@ body {
         border: 1px solid #c7d2fe;
     }
 
-    &.type-SRV, &.type-CAA, &.type-PTR, &.type-SOA, &.type-CERT {
-        background-color: #f1f5f9;
-        color: #475569;
-        border: 1px solid #e2e8f0;
+    &.type-SRV {
+        background-color: #ccfbf1;
+        color: #0f766e;
+        border: 1px solid #99f6e4;
+    }
+
+    &.type-SVCB, &.type-HTTPS {
+        background-color: #cffafe;
+        color: #0e7490;
+        border: 1px solid #a5f3fc;
     }
 }
 
 html.dark {
     .dns-type-tag {
+        // Default badge colors, overridden by specific types below
+        background-color: rgba(71, 85, 105, 0.25);
+        color: #cbd5e1;
+        border-color: rgba(148, 163, 184, 0.35);
+
         &.type-A {
             background-color: rgba(30, 64, 175, 0.25);
             color: #93c5fd;
@@ -279,10 +294,16 @@ html.dark {
             border-color: rgba(99, 102, 241, 0.35);
         }
 
-        &.type-SRV, &.type-CAA, &.type-PTR, &.type-SOA, &.type-CERT {
-            background-color: rgba(71, 85, 105, 0.25);
-            color: #cbd5e1;
-            border-color: rgba(148, 163, 184, 0.35);
+        &.type-SRV {
+            background-color: rgba(15, 118, 110, 0.25);
+            color: #5eead4;
+            border-color: rgba(20, 184, 166, 0.35);
+        }
+
+        &.type-SVCB, &.type-HTTPS {
+            background-color: rgba(14, 116, 144, 0.25);
+            color: #67e8f9;
+            border-color: rgba(6, 182, 212, 0.35);
         }
     }
 }
