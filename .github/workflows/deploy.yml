@@ -1,0 +1,46 @@
+name: Deploy to Cloudflare Pages
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  deployments: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    name: Deploy to Cloudflare Pages
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      # 部署注意事项（参见 deploy/README.md）：
+      # 1. 这里必须运行 `yarn build`（vite build），切勿执行 `yarn build:manual`。
+      # 2. 常规 wrangler 部署会自动打包仓库根目录的 `functions/`（用于 /api 反向代理）；
+      #    若使用了 build:manual 会将 _worker.js 注入 dist/，导致与 functions/ 目录冲突而报错。
+      # 3. 这里在构建后做一次防御性检查，确保 dist 干净且无残留的 _worker.js。
+      - name: Build frontend
+        run: |
+          yarn build
+          rm -f dist/_worker.js
+
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy dist --project-name=dnsflare
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
