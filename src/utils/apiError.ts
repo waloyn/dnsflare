@@ -1,4 +1,5 @@
 import { APIResponse } from '@/api'
+import i18n from '@/locales'
 
 
 export function getErrorMessage(err: any): string {
@@ -14,7 +15,7 @@ export function getErrorMessage(err: any): string {
         return `HTTP ${err.response.status}${body ? `: ${body}` : ''}`
     }
 
-    return err?.message ?? 'Unknown error'
+    return err?.message ?? i18n.global.t('errors.unknownError')
 }
 
 export function toFailureResponse<T>(err: any): APIResponse<T> {
@@ -37,7 +38,7 @@ export function describeApiResponse(data: any, fallback: string): string {
     }
 
     if (typeof data === 'string' && data.trimStart().startsWith('<')) {
-        return `${fallback}: /api 代理返回了 HTML 页面而不是 Cloudflare API 响应 (请检查部署的代理 / Pages Functions 是否生效)`
+        return `${fallback}: ${i18n.global.t('errors.proxyHtmlHint')}`
     }
 
     return fallback

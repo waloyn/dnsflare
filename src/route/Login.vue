@@ -223,7 +223,7 @@ function handleSwitchAccount() {
 }
 
 function onLoginSuccessful() {
-    ElMessage.success(t('zoneList.title') + ' - 验证成功，即将进入')
+    ElMessage.success(t('app.loginSuccess'))
     setTimeout(() => {
         router.push({ name: 'ZoneList' })
     }, 600)
@@ -235,7 +235,7 @@ async function submit() {
     try {
         if (activeTab.value === 'token') {
             if (!model.token.trim()) {
-                ElMessage.warning('请输入 API Token')
+                ElMessage.warning(t('app.tokenRequired'))
                 isLoading.value = false
                 return
             }
@@ -248,11 +248,11 @@ async function submit() {
                 })
                 onLoginSuccessful()
             } else {
-                ElMessage.error('API Token 无效或无权访问，请检查权限')
+                ElMessage.error(t('app.loginFailedToken'))
             }
         } else {
             if (!model.email.trim() || !model.globalToken.trim()) {
-                ElMessage.warning('请输入邮箱地址与 Global API Key')
+                ElMessage.warning(t('app.globalKeyRequired'))
                 isLoading.value = false
                 return
             }
@@ -266,11 +266,11 @@ async function submit() {
                 })
                 onLoginSuccessful()
             } else {
-                ElMessage.error('邮箱或 Global API Key 错误')
+                ElMessage.error(t('app.loginFailedGlobalKey'))
             }
         }
     } catch {
-        ElMessage.error('登录请求异常，请检查网络或凭证')
+        ElMessage.error(t('app.loginError'))
     } finally {
         isLoading.value = false
     }

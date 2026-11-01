@@ -97,13 +97,13 @@
                         <div class="ttl-auto-row">
                             <div class="ttl-text">
                                 <span class="ttl-title">{{ t('recordForm.ttl_auto') }}</span>
-                                <span class="ttl-desc">由 Cloudflare 自动分配最佳缓存时间</span>
+                                <span class="ttl-desc">{{ t('recordForm.ttl_auto_desc') }}</span>
                             </div>
                             <el-switch v-model="model.autoTTL" />
                         </div>
 
                         <div v-if="!model.autoTTL" class="ttl-custom-row">
-                            <span class="custom-label">TTL (秒):</span>
+                            <span class="custom-label">{{ t('recordForm.ttl_seconds') }}</span>
                             <el-input-number
                                 v-model="model.ttl"
                                 :min="60"
@@ -229,30 +229,7 @@ const modeLocale = computed(() => {
 })
 
 function getTypeDescription(type: string): string {
-    switch (type) {
-        case 'A': return 'IPv4 地址'
-        case 'AAAA': return 'IPv6 地址'
-        case 'CNAME': return '指向另一个域名'
-        case 'TXT': return '文本记录 (SPF/验证等)'
-        case 'MX': return '邮件交换记录'
-        case 'NS': return '名称服务器'
-        case 'SRV': return '服务定位记录'
-        case 'CAA': return 'CA 授权限制'
-        case 'PTR': return '反向解析记录'
-        case 'SVCB': return '服务绑定记录'
-        case 'HTTPS': return 'HTTPS 服务绑定记录'
-        case 'LOC': return '地理位置记录'
-        case 'SPF': return 'SPF 邮件发件授权'
-        case 'CERT': return '证书记录'
-        case 'DNSKEY': return 'DNSSEC 公钥'
-        case 'DS': return 'DNSSEC 委托签名'
-        case 'NAPTR': return '命名授权指针'
-        case 'SMIMEA': return 'S/MIME 证书关联'
-        case 'SSHFP': return 'SSH 主机指纹'
-        case 'TLSA': return 'TLS 证书关联'
-        case 'URI': return 'URI 定位记录'
-        default: return ''
-    }
+    return t(`recordForm.typeDesc.${type}`)
 }
 
 function display() {
@@ -325,10 +302,10 @@ async function createRecord() {
 
         if (!res) {
             emits('success')
-            ElMessage.success(`${modeLocale.value}成功`)
+            ElMessage.success(t('recordForm.saveSuccess', { action: modeLocale.value }))
             handleClose()
         } else {
-            ElMessage.error(`${modeLocale.value}失败: ${res}`)
+            ElMessage.error(t('recordForm.saveFailed', { action: modeLocale.value, message: res }))
         }
     } finally {
         isLoading.value = false

@@ -3,6 +3,7 @@ import { objectToCamelCase, objectToHungarian } from '@/utils/case'
 import { describeApiResponse } from '@/utils/apiError'
 import { LoadPageResponse, convertPagination } from '@/utils/pagination'
 import { APIResponse, CloudflareZoneRecord, PageSettings } from '.'
+import i18n from '@/locales'
 
 export async function listUserZones(page?: PageSettings): Promise<APIResponse<CloudflareZoneRecord[]>> {
     const axios = useAxios()
@@ -26,7 +27,7 @@ export async function listUserZonesAll(page?: PageSettings): Promise<LoadPageRes
     const zones = await listUserZones(page)
 
     if (!zones.result || !zones.resultInfo) {
-        throw new Error(describeApiResponse(zones, '加载域名列表失败'))
+        throw new Error(describeApiResponse(zones, i18n.global.t('errors.loadZonesFailed')))
     }
 
     return {

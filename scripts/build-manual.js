@@ -115,7 +115,7 @@ function buildZip(files, zipPath) {
 
 async function main() {
     console.log('==> vite build')
-    await vite.build({ root, configFile: path.join(root, 'vite.config.ts') })
+    await vite.build({ root, configFile: path.join(root, 'vite.config.mts') })
 
     fs.copyFileSync(workerSource, path.join(distDir, '_worker.js'))
     console.log('==> injected dist/_worker.js (Pages advanced mode)')

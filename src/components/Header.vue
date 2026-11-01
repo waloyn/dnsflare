@@ -7,7 +7,7 @@
                     <div class="logo-badge">
                         <FontAwesomeIcon icon="cloud" class="logo-icon" />
                     </div>
-                    <span class="logo-text">{{ $t('app.title') }}</span>
+                    <span class="logo-text">{{ t('app.title') }}</span>
                     <span class="logo-tag">DNS</span>
                 </router-link>
             </div>
@@ -15,7 +15,7 @@
             <!-- Right Actions Section -->
             <div class="header-right">
                 <!-- GitHub Link -->
-                <el-tooltip :content="$t('app.github')" placement="bottom">
+                <el-tooltip :content="t('app.github')" placement="bottom">
                     <a
                         href="https://github.com/Indexyz/Dnsflare"
                         target="_blank"
@@ -31,24 +31,24 @@
 
                 <!-- Theme Switcher -->
                 <el-dropdown trigger="click" @command="handleThemeCommand">
-                    <span class="action-btn" :title="$t('theme.placeholder')">
+                    <span class="action-btn" :title="t('theme.placeholder')">
                         <FontAwesomeIcon :icon="currentThemeIcon" />
                     </span>
                     <template #dropdown>
                         <el-dropdown-menu class="app-dropdown-menu">
                             <el-dropdown-item command="light" :class="{ 'is-active': activeTheme === 'light' }">
                                 <FontAwesomeIcon icon="sun" class="item-icon" />
-                                <span>{{ $t('theme.light') }}</span>
+                                <span>{{ t('theme.light') }}</span>
                                 <FontAwesomeIcon v-if="activeTheme === 'light'" icon="check" class="check-icon" />
                             </el-dropdown-item>
                             <el-dropdown-item command="dark" :class="{ 'is-active': activeTheme === 'dark' }">
                                 <FontAwesomeIcon icon="moon" class="item-icon" />
-                                <span>{{ $t('theme.dark') }}</span>
+                                <span>{{ t('theme.dark') }}</span>
                                 <FontAwesomeIcon v-if="activeTheme === 'dark'" icon="check" class="check-icon" />
                             </el-dropdown-item>
                             <el-dropdown-item command="auto" :class="{ 'is-active': activeTheme === 'auto' }">
                                 <FontAwesomeIcon icon="gear" class="item-icon" />
-                                <span>{{ $t('theme.auto') }}</span>
+                                <span>{{ t('theme.auto') }}</span>
                                 <FontAwesomeIcon v-if="activeTheme === 'auto'" icon="check" class="check-icon" />
                             </el-dropdown-item>
                         </el-dropdown-menu>
@@ -57,19 +57,19 @@
 
                 <!-- Language Switcher -->
                 <el-dropdown trigger="click" @command="handleLangCommand">
-                    <span class="action-btn" :title="$t('language.name')">
+                    <span class="action-btn" :title="t('language.name')">
                         <FontAwesomeIcon icon="globe" />
                     </span>
                     <template #dropdown>
                         <el-dropdown-menu class="app-dropdown-menu">
                             <el-dropdown-item command="zh" :class="{ 'is-active': locale === 'zh' }">
                                 <span class="flag-icon">🇨🇳</span>
-                                <span>{{ $t('language.zh') }}</span>
+                                <span>{{ t('language.zh') }}</span>
                                 <FontAwesomeIcon v-if="locale === 'zh'" icon="check" class="check-icon" />
                             </el-dropdown-item>
                             <el-dropdown-item command="en" :class="{ 'is-active': locale === 'en' }">
                                 <span class="flag-icon">🇺🇸</span>
-                                <span>{{ $t('language.en') }}</span>
+                                <span>{{ t('language.en') }}</span>
                                 <FontAwesomeIcon v-if="locale === 'en'" icon="check" class="check-icon" />
                             </el-dropdown-item>
                         </el-dropdown-menu>
@@ -79,7 +79,7 @@
                 <!-- User/Login Section -->
                 <template v-if="!isLoggedIn">
                     <el-button type="primary" size="default" @click="router.push({ name: 'LoginPage' })">
-                        {{ $t('app.login') }}
+                        {{ t('app.login') }}
                     </el-button>
                 </template>
                 <el-dropdown v-else trigger="click" @command="handleUserCommand">
@@ -97,11 +97,11 @@
                             </div>
                             <el-dropdown-item command="zones">
                                 <FontAwesomeIcon icon="layer-group" class="item-icon" />
-                                <span>{{ $t('zoneList.title') }}</span>
+                                <span>{{ t('zoneList.title') }}</span>
                             </el-dropdown-item>
                             <el-dropdown-item divided command="logout" class="danger-item">
                                 <FontAwesomeIcon icon="right-from-bracket" class="item-icon" />
-                                <span>{{ $t('app.logout') }}</span>
+                                <span>{{ t('app.logout') }}</span>
                             </el-dropdown-item>
                         </el-dropdown-menu>
                     </template>
@@ -121,7 +121,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 const userStore = useUserStore()
 const router = useRouter()
-const { locale } = useI18n()
+const { locale, t } = useI18n()
 
 // --- Theme Logic ---
 const isDark = useDark()

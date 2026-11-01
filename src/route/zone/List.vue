@@ -81,7 +81,7 @@
                                 <a
                                     class="domain-name"
                                     href="javascript:void(0)"
-                                    @click="listZoneRecord(scope.row)"
+                                    @click="listZoneRecord(scope.row as CloudflareZoneRecord)"
                                 >
                                     {{ scope.row.name }}
                                 </a>
@@ -177,7 +177,7 @@
                             type="primary"
                             size="small"
                             class="manage-btn"
-                            @click.prevent="listZoneRecord(scope.row)"
+                            @click.prevent="listZoneRecord(scope.row as CloudflareZoneRecord)"
                         >
                             <FontAwesomeIcon icon="pen" class="manage-btn-icon" />
                             <span>{{ t('zoneList.action_edit') }}</span>
@@ -212,8 +212,9 @@ import { getErrorMessage, describeApiResponse } from '@/utils/apiError'
 import { CloudflareZoneRecord, PageSettings } from '@/api'
 import { useI18n } from 'vue-i18n'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import i18n from '@/locales'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const filterList: Ref<string> = ref('')
 const isLoading: Ref<boolean> = ref(true)
 const datas: Ref<CloudflareZoneRecord[]> = ref([])
@@ -247,7 +248,7 @@ async function loadPage(page?: PageSettings) {
                 pageInfo.value = convertPagination(zones.resultInfo)
             }
         } else {
-            ElMessage.error(describeApiResponse(zones, '加载域名列表失败'))
+            ElMessage.error(describeApiResponse(zones, i18n.global.t('errors.loadZonesFailed')))
         }
     } catch (err) {
         ElMessage.error(getErrorMessage(err))
@@ -257,6 +258,9 @@ async function loadPage(page?: PageSettings) {
 }
 
 function refreshList() {
+    if (isFullyLoaded.value) {
+        return loadAll()
+    }
     return loadPage({
         perPage: pageInfo.value.size,
         page: pageInfo.value.page,
@@ -281,8 +285,7 @@ function changeSize(pageSize: number) {
 function formatDate(date: string) {
     if (!date) return '-'
     const d = new Date(date)
-    return d.toLocaleString('zh-CN', {
-        timeZone: 'Asia/Shanghai',
+    return d.toLocaleString(locale.value === 'en' ? 'en-US' : 'zh-CN', {
         year: 'numeric',
         month: '2-digit',
         day: '2-digit',
@@ -334,11 +337,7 @@ function listZoneRecord(data: CloudflareZoneRecord) {
     })
 }
 
-async function updateFilter() {
-    if (isFullyLoaded.value || isLoading.value) {
-        return
-    }
-
+async function loadAll() {
     isLoading.value = true
     try {
         const pages = await fullLoadPages(listUserZonesAll)
@@ -350,6 +349,14 @@ async function updateFilter() {
     } finally {
         isLoading.value = false
     }
+}
+
+async function updateFilter() {
+    if (isFullyLoaded.value || isLoading.value) {
+        return
+    }
+
+    await loadAll()
 }
 
 await loadPage({

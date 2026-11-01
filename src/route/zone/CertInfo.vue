@@ -18,7 +18,7 @@
                     <span class="label">{{ t('certInfo.certificateAuthority') }}:</span>
                     <div class="current-ca-badge">
                         <span class="status-dot active"></span>
-                        <span class="ca-name">{{ CertificateAuthorityDisplay[certOwner] || certOwner || '-' }}</span>
+                        <span class="ca-name">{{ certOwnerLabel }}</span>
                     </div>
                 </div>
             </div>
@@ -61,14 +61,14 @@
             <!-- Info Note -->
             <div class="cert-notice">
                 <FontAwesomeIcon icon="circle-info" class="notice-icon" />
-                <span>变更 CA 机构后，Cloudflare 将在下一次证书轮换续期时自动签发新证书，期间现有证书不受影响。</span>
+                <span>{{ t('certInfo.notice') }}</span>
             </div>
         </div>
     </div>
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { getCertInfo, CertificateAuthorityDisplay, CertificateAuthority, patchCertAuthority } from '@/api/cert'
 import { ElMessage } from 'element-plus'
 import { getErrorMessage } from '@/utils/apiError'
@@ -81,9 +81,13 @@ const props = defineProps<{
 
 const isLoading = ref(false)
 const isVisible = ref(true)
-const certOwner = ref('')
+const certOwner = ref<CertificateAuthority | ''>('')
 const newCertOwner = ref<CertificateAuthority>('lets_encrypt')
 const { t } = useI18n()
+
+const certOwnerLabel = computed(() => {
+    return CertificateAuthorityDisplay[certOwner.value as CertificateAuthority] || certOwner.value || '-'
+})
 
 async function loadInfo() {
     isLoading.value = true
@@ -110,10 +114,10 @@ async function modifyCertAuthority() {
     try {
         const res = await patchCertAuthority(props.zoneId, newCertOwner.value)
         if (res.success) {
-            ElMessage.success('证书颁发机构修改成功')
+            ElMessage.success(t('certInfo.modifySuccess'))
             await loadInfo()
         } else {
-            ElMessage.error(`修改失败: ${res.errors?.[0]?.message ?? '未知错误'}`)
+            ElMessage.error(t('certInfo.modifyFailed', { message: res.errors?.[0]?.message ?? t('errors.unknown') }))
         }
     } finally {
         isLoading.value = false

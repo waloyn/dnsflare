@@ -17,7 +17,7 @@ export async function userTokenVerify(token: string): Promise<boolean> {
         })
 
         return response.data.success
-    } catch (err) {
+    } catch {
         return false
     }
 }
@@ -34,7 +34,7 @@ export async function userEmailVerify(email: string, globalToken: string): Promi
         })
 
         return true
-    } catch (err) {
+    } catch {
         return false
     }
 }

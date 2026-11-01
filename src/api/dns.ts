@@ -3,6 +3,7 @@ import { objectToCamelCase, objectToHungarian } from '@/utils/case'
 import { LoadPageFunc, LoadPageResponse, convertPagination } from '@/utils/pagination'
 import { getErrorMessage, describeApiResponse } from '@/utils/apiError'
 import { APIResponse, CloudflareDnsRecord, PageSettings, DnsRecordType } from '.'
+import i18n from '@/locales'
 
 
 export async function listZoneDnsRecord(
@@ -27,7 +28,7 @@ export function listZoneDnsRecordAll(zoneId: string): LoadPageFunc<CloudflareDns
         const data = await listZoneDnsRecord(zoneId, page)
 
         if (!data.result || !data.resultInfo) {
-            throw new Error(describeApiResponse(data, '加载解析记录失败'))
+            throw new Error(describeApiResponse(data, i18n.global.t('errors.loadRecordsFailed')))
         }
 
         return {

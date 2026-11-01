@@ -177,7 +177,7 @@
                                 <div
                                     class="cf-proxy-badge"
                                     :class="scope.row.proxied ? 'is-proxied' : 'is-dns-only'"
-                                    @click="toggleProxy(scope.row)"
+                                    @click="toggleProxy(scope.row as CloudflareDnsRecord)"
                                 >
                                     <FontAwesomeIcon icon="cloud" class="cloud-icon" />
                                     <span>{{ scope.row.proxied ? t('recordList.proxiedBadge') : t('recordList.dnsOnlyBadge') }}</span>
@@ -204,7 +204,7 @@
                                     size="small"
                                     circle
                                     class="action-icon-btn edit-btn"
-                                    @click.prevent="editRecord(scope.row)"
+                                    @click.prevent="editRecord(scope.row as CloudflareDnsRecord)"
                                 >
                                     <FontAwesomeIcon icon="pen" />
                                 </el-button>
@@ -216,7 +216,7 @@
                                 :cancel-button-text="t('recordList.action_delete_confirm_cancel')"
                                 confirm-button-type="danger"
                                 width="220"
-                                @confirm="doDeleteRecord(scope.row)"
+                                @confirm="doDeleteRecord(scope.row as CloudflareDnsRecord)"
                             >
                                 <template #reference>
                                     <el-button
@@ -234,7 +234,7 @@
             </el-table>
 
             <!-- Table Footer / Pagination -->
-            <div v-if="pageInfo.total > pageInfo.size" class="pagination-wrapper">
+            <div v-if="!isFullyLoaded && pageInfo.total > pageInfo.size" class="pagination-wrapper">
                 <el-pagination
                     :page-size="pageInfo.size"
                     :current-page="pageInfo.page"
@@ -259,6 +259,7 @@ import { PaginationDetails, convertPagination, LoadPageResponse, fullLoadPages }
 import { getErrorMessage, describeApiResponse } from '@/utils/apiError'
 import { useI18n } from 'vue-i18n'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import i18n from '@/locales'
 
 const { t } = useI18n()
 const filterList = ref('')
@@ -304,11 +305,7 @@ const filterTableData = computed(() => {
 
 const isFullyLoaded = ref(false)
 
-async function updateFilter() {
-    if (isFullyLoaded.value || isLoading.value) {
-        return
-    }
-
+async function loadAll() {
     isLoading.value = true
     try {
         const pages = await fullLoadPages(listZoneDnsRecordAll(props.zoneId))
@@ -320,6 +317,14 @@ async function updateFilter() {
     } finally {
         isLoading.value = false
     }
+}
+
+async function updateFilter() {
+    if (isFullyLoaded.value || isLoading.value) {
+        return
+    }
+
+    await loadAll()
 }
 
 function resetFilters() {
@@ -365,7 +370,7 @@ async function rawLoadPage(page?: PageSettings): Promise<LoadPageResponse<any>> 
     const records = await listZoneDnsRecord(zoneId.value, page)
 
     if (!records.result || !records.resultInfo) {
-        throw new Error(describeApiResponse(records, '加载解析记录失败'))
+        throw new Error(describeApiResponse(records, i18n.global.t('errors.loadRecordsFailed')))
     }
 
     return {
@@ -392,6 +397,9 @@ async function loadPage(page?: PageSettings) {
 }
 
 function refresh() {
+    if (isFullyLoaded.value) {
+        return loadAll()
+    }
     return loadPage({
         perPage: pageInfo.value.size,
         page: pageInfo.value.page,
@@ -409,10 +417,10 @@ async function changeProxied(rec: CloudflareDnsRecord, proxied: boolean) {
         const res = await patchRecord(rec, { proxied })
 
         if (!res) {
-            ElMessage.success('代理状态已修改')
+            ElMessage.success(t('recordList.proxiedChanged'))
             await refresh()
         } else {
-            ElMessage.error(`修改失败: ${res}`)
+            ElMessage.error(t('recordList.modifyFailed', { message: res }))
         }
     } finally {
         isLoading.value = false
@@ -441,9 +449,9 @@ async function doDeleteRecord(rec: CloudflareDnsRecord) {
     })
 
     if (deleteError) {
-        ElMessage.error(`删除失败: ${deleteError}`)
+        ElMessage.error(t('recordList.deleteFailed', { message: deleteError }))
     } else {
-        ElMessage.success('记录已成功删除')
+        ElMessage.success(t('recordList.deleteSuccess'))
     }
 
     await refresh()

@@ -27,11 +27,14 @@ jobs:
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
-      # 部署注意事项（参见 deploy/README.md）：
-      # 1. 这里必须运行 `yarn build`（vite build），切勿执行 `yarn build:manual`。
-      # 2. 常规 wrangler 部署会自动打包仓库根目录的 `functions/`（用于 /api 反向代理）；
-      #    若使用了 build:manual 会将 _worker.js 注入 dist/，导致与 functions/ 目录冲突而报错。
-      # 3. 这里在构建后做一次防御性检查，确保 dist 干净且无残留的 _worker.js。
+      # 注意事项:
+      # 1. 这里必须执行 `yarn build` (vite build), 不要执行 `yarn build:manual`;
+      # 2. wrangler 会自动包含仓库根目录的 `functions/` 目录作为 /api 代理的 Pages Functions,
+      #    所以构建后要删除 dist/_worker.js, 避免与 functions/ 冲突 (advanced mode 会接管全部请求);
+      # 3. `yarn build:manual` 仅用于 Cloudflare 后台直接上传 zip 的手动部署流程。
+      - name: Type check
+        run: yarn typecheck
+
       - name: Build frontend
         run: |
           yarn build
