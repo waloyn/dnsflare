@@ -250,7 +250,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, Ref, computed } from 'vue'
+import { ref, Ref, computed, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { listZoneDnsRecord, deleteRecord, patchRecord, listZoneDnsRecordAll } from '@/api/dns'
 import RecordModal from './Record.vue'
@@ -264,7 +264,10 @@ import i18n from '@/locales'
 const { t } = useI18n()
 const filterList = ref('')
 const selectedTypeFilter = ref('ALL')
-const isLoading = ref(true)
+// Must start false: entering the render with v-loading=true races the
+// Transition/Suspense commit (directive updated fires before mounted, and EP's
+// mounted hook re-creates the mask unconditionally, orphaning the first one).
+const isLoading = ref(false)
 const copiedNameId = ref<string | null>(null)
 const copiedContentId = ref<string | null>(null)
 
@@ -483,7 +486,12 @@ function editRecord(rec: CloudflareDnsRecord) {
     getRecord.value.setRecord(rec)
 }
 
-loadPage()
+// Load after mount: the v-loading state flip must happen after the component
+// is committed, or the loading mask directive can end up with an orphaned mask
+// it never closes (see the isLoading note above).
+onMounted(() => {
+    loadPage()
+})
 </script>
 
 <style lang="scss" scoped>

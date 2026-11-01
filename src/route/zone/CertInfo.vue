@@ -68,7 +68,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { getCertInfo, CertificateAuthorityDisplay, CertificateAuthority, patchCertAuthority } from '@/api/cert'
 import { ElMessage } from 'element-plus'
 import { getErrorMessage } from '@/utils/apiError'
@@ -109,6 +109,13 @@ async function loadInfo() {
     }
 }
 
+// Start loading after mount: mutating v-loading state before the component is
+// committed races the Transition/Suspense pipeline and can leave the loading
+// mask directive with a mask it will never close.
+onMounted(() => {
+    loadInfo()
+})
+
 async function modifyCertAuthority() {
     isLoading.value = true
     try {
@@ -123,8 +130,6 @@ async function modifyCertAuthority() {
         isLoading.value = false
     }
 }
-
-loadInfo()
 </script>
 
 <style lang="scss" scoped>
